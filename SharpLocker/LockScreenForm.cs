@@ -51,7 +51,7 @@ namespace SharpLocker
             BackgroundImageLayout = ImageLayout.Stretch;
 
             this.TopMost = true;
-            string userName = System.DirectoryServices.AccountManagement.UserPrincipal.Current.DisplayName;
+            string userName = System.Security.Principal.WindowsIdentity.GetCurrent().Name.Split('\\')[1];
             UserNameLabel.Text = userName;
             UserNameLabel.BackColor = System.Drawing.Color.Transparent;
 

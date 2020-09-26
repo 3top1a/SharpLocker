@@ -1,5 +1,8 @@
 ﻿using SharpLocker;
+using System;
+using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 using System.Windows.Forms;
 
 namespace SharpLocker
@@ -230,6 +233,7 @@ namespace SharpLocker
         }
 
         #endregion
+
         private CustomPictureBox ProfileIcon;
         private System.Windows.Forms.Label UserNameLabel;
         private System.Windows.Forms.TextBox PasswordTextBox;
